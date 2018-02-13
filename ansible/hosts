@@ -1,0 +1,28 @@
+[OSEv3:children]
+masters
+etcd
+nodes
+
+[OSEv3:vars]
+ansible_ssh_user=ec2-user
+ansible_sudo=true
+ansible_become=true
+
+deployment_type=origin
+os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
+openshift_install_examples=true
+
+openshift_docker_options='--selinux-enabled --insecure-registry 172.30.0.0/16'
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/openshift/openshift-passwd'}]
+openshift_disable_check=disk_availability,docker_storage,memory_availability
+
+[masters]
+openshift-master	ansible_host=##MASTER IP##
+
+[etcd]
+openshift-master	ansible_host=##MASTER IP##
+
+[nodes]
+openshift-master	ansible_host=##MASTER IP## openshift_node_labels="{'region':'infra','zone':'east'}" openshift_schedulable=true
+openshift-worker1	ansible_host=##WORKER1 IP## openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+openshift-worker2	ansible_host=##WORKER2 IP## openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
